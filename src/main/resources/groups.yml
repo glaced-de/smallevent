@@ -1,0 +1,19 @@
+groups:
+  default:
+    weight: 0
+    prefix: "<gray>Spieler</gray> "
+    suffix: ""
+    inherits: []
+    permissions: []
+  mod:
+    weight: 50
+    prefix: "<aqua>Mod</aqua> "
+    suffix: ""
+    inherits: [default]
+    permissions: [desertjungle.team.admin]
+  admin:
+    weight: 100
+    prefix: "<red>Admin</red> "
+    suffix: ""
+    inherits: [mod]
+    permissions: [desertjungle.event.admin, desertjungle.group.admin]

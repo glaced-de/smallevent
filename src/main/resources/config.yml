@@ -1,0 +1,27 @@
+database:
+  file: database.db
+teams:
+  maximum-size: 50
+  friendly-fire: false
+  auto-balance: true
+team-spawns:
+  desert: {}
+  jungle: {}
+event:
+  duration-minutes: 90
+  countdown-seconds: 600
+  respawn-seconds: 5
+  spawn-protection-seconds: 10
+ui:
+  scoreboard-title: "<gray>◇</gray> <gradient:#ffcc33:#00cc66>Desert vs Jungle</gradient>"
+  actionbar: "<gold>🏜 Desert: <white><desert></white> <dark_gray>|</dark_gray> <green>🌴 Jungle: <white><jungle></white> <dark_gray>|</dark_gray> <red>❤ <health></red> <dark_gray>|</dark_gray> <yellow>⚔ <kills> Kills</yellow>"
+  tab-header: "<gradient:#ffcc33:#00cc66><bold>Desert vs Jungle</bold></gradient>\n<gray>50 vs 50 Event</gray>"
+  tab-footer: "<gray>Online: <white><online></white> <dark_gray>•</dark_gray> discord.gg/p3C625MsvE"
+messages:
+  prefix: "<dark_gray>[<gradient:#ffcc33:#00cc66>DJ</gradient><dark_gray>] </dark_gray>"
+  no-permission: "<red>Dafür hast du keine Berechtigung."
+  team-full: "<red>Dieses Team ist bereits voll."
+  team-joined: "<green>Du bist dem Team <team> beigetreten."
+  team-left: "<yellow>Du hast dein Event-Team verlassen."
+  event-started: "<green><bold>Das Event läuft!</bold>"
+  event-stopped: "<red>Das Event wurde beendet."

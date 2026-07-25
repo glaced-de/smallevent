@@ -1,0 +1,56 @@
+name: DesertJungleCore
+version: '${version}'
+main: net.glaced.desertjunglecore.DesertJungleCorePlugin
+api-version: '26.1.2'
+load: POSTWORLD
+folia-supported: true
+description: Desert vs Jungle event core for Paper and ShreddedPaper.
+authors: [Glaced]
+softdepend: [PlaceholderAPI]
+libraries:
+  - org.xerial:sqlite-jdbc:3.51.1.0
+commands:
+  team:
+    description: Select or manage an event team.
+    usage: /team <desert|jungle|leave|set>
+  event:
+    description: Manage the event lifecycle.
+    usage: /event <start|stop|pause|resume>
+  group:
+    description: Manage local permission groups.
+    usage: /group <create|set|assign>
+  speed:
+    description: Set your flying speed
+    usage: /speed 1-50
+    permission: fly.use
+  vanish:
+    description: Sets you in vanish
+    usage: /vanish
+    permission: vanish.use
+  mute:
+    description: Mutes a player
+    usage: /mute
+    permission: mute.use
+  gm:
+    description: Change gamemode
+    usage: /gm 0-3
+    permission: gm.use
+permissions:
+  desertjungle.team:
+    default: op
+  desertjungle.team.admin:
+    default: op
+  desertjungle.team.spawn:
+    default: op
+  desertjungle.event.admin:
+    default: op
+  desertjungle.group.admin:
+    default: op
+  fly.use:
+    default: op
+  vanish.use:
+    default: op
+  mute.use:
+    default: op
+  gm.use:
+    default: op
