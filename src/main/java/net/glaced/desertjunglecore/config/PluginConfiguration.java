@@ -14,4 +14,15 @@ public record PluginConfiguration(JavaPlugin plugin) {
     public int countdownSeconds() { return c().getInt("event.countdown-seconds", 600); }
     public int respawnSeconds() { return c().getInt("event.respawn-seconds", 5); }
     public String text(String key) { return c().getString(key, "<red>Missing config: " + key); }
+    public boolean autoAssignTeamOnJoin() {
+        return c().getBoolean("teams.auto-assign-on-join", true);
+    }
+
+    public boolean restrictTeamSwitchToFirstDay() {
+        return c().getBoolean("teams.restrict-switch-to-first-day", true);
+    }
+
+    public long teamSwitchWindowMillis() {
+        return c().getLong("teams.switch-window-hours", 24) * 60 * 60 * 1000L;
+    }
 }

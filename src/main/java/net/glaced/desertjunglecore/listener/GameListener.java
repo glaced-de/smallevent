@@ -10,11 +10,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -116,6 +119,18 @@ public final class GameListener implements Listener {
         if (muteService.isMuted(id)) {
             event.setCancelled(true);
             event.getPlayer().sendMessage("§cYou are muted.");
+        }
+    }
+
+    @EventHandler
+    public void onuseEnchantingTable(PrepareItemEnchantEvent event){
+        event.setCancelled(true);
+    }
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        if (event.getClickedBlock() != null &&
+                event.getClickedBlock().getType() == Material.ENCHANTING_TABLE) {
+            event.setCancelled(true);
         }
     }
 }

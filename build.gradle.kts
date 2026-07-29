@@ -20,6 +20,7 @@ dependencies {
 
     // Folia API als normale compileOnly-Dependency
     compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("net.luckperms:api:5.5")
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)

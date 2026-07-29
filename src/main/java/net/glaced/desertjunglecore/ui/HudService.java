@@ -28,14 +28,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class HudService {
 
-    private static final TextColor DESERT = TextColor.color(0xF2C572);
-    private static final TextColor JUNGLE = TextColor.color(0x4CD07D);
+    private static final TextColor Team_1 = TextColor.color(0xF2C572);
+    private static final TextColor Team_2 = TextColor.color(0x4CD07D);
     private static final TextColor DISCORD_BLUE = TextColor.color(0x5865F2);
     private static final TextColor LABEL_GRAY = TextColor.color(0x8A8A8A);
     private static final TextColor ARROW_GRAY = TextColor.color(0x6B6B6B);
 
     private static final Component BLANK = Component.empty();
-    private static final Component TITLE = gradient("GLACED EVENTS", DESERT, JUNGLE, true);
+    private static final Component TITLE = gradient("GLACED EVENTS", Team_1, Team_2, true);
     private static final Component HEADER = TITLE;
     private static final Component FOOTER = Component.text()
             .append(Component.text("Discord", DISCORD_BLUE))
@@ -54,19 +54,13 @@ public final class HudService {
 
     private static final Map<EventState, Component> STATE_BADGES = buildStateBadges();
 
-    private static final Component ACTIONBAR_DESERT_LABEL = Component.text("Desert ", DESERT);
-    private static final Component ACTIONBAR_JUNGLE_LABEL = Component.text(" | Jungle ", JUNGLE);
-    private static final Component ACTIONBAR_HP_LABEL = Component.text(" | HP ", NamedTextColor.RED);
-
     private final JavaPlugin plugin;
     private final TeamService teams;
     private final EventService event;
 
     private final Map<UUID, FastBoard> boards = new ConcurrentHashMap<>();
     private final Map<UUID, SidebarState> lastSidebar = new ConcurrentHashMap<>();
-    private final Map<UUID, ActionBarState> lastActionBar = new ConcurrentHashMap<>();
 
-    private ScheduledTask actionBarTask;
     private ScheduledTask sidebarTask;
 
     public HudService(JavaPlugin plugin, TeamService teams, EventService event, GroupService ignoredGroups, PluginConfiguration ignoredConfig) {
@@ -76,13 +70,6 @@ public final class HudService {
     }
 
     public void start() {
-        actionBarTask = Bukkit.getGlobalRegionScheduler().runAtFixedRate(
-                plugin,
-                task -> dispatch(this::updateActionBar),
-                1L,
-                20L
-        );
-
         sidebarTask = Bukkit.getGlobalRegionScheduler().runAtFixedRate(
                 plugin,
                 task -> dispatch(this::updateSidebar),
@@ -92,12 +79,10 @@ public final class HudService {
     }
 
     public void stop() {
-        if (actionBarTask != null) actionBarTask.cancel();
         if (sidebarTask != null) sidebarTask.cancel();
         boards.values().forEach(FastBoard::delete);
         boards.clear();
         lastSidebar.clear();
-        lastActionBar.clear();
     }
 
     public void initialize(Player player) {
@@ -114,7 +99,6 @@ public final class HudService {
         FastBoard board = boards.remove(id);
         if (board != null) board.delete();
         lastSidebar.remove(id);
-        lastActionBar.remove(id);
     }
 
     private void dispatch(Consumer<Player> update) {
@@ -127,25 +111,6 @@ public final class HudService {
         }
     }
 
-    private void updateActionBar(Player player) {
-        UUID id = player.getUniqueId();
-        int desert = teams.size(EventTeam.DESERT);
-        int jungle = teams.size(EventTeam.JUNGLE);
-        int hp = (int) Math.ceil(player.getHealth());
-
-        ActionBarState state = new ActionBarState(desert, jungle, hp);
-        if (state.equals(lastActionBar.put(id, state))) return;
-
-        player.sendActionBar(Component.text()
-                .append(ACTIONBAR_DESERT_LABEL)
-                .append(Component.text(desert, NamedTextColor.WHITE))
-                .append(ACTIONBAR_JUNGLE_LABEL)
-                .append(Component.text(jungle, NamedTextColor.WHITE))
-                .append(ACTIONBAR_HP_LABEL)
-                .append(Component.text(hp, NamedTextColor.WHITE))
-                .build());
-    }
-
     private void updateSidebar(Player player) {
         UUID id = player.getUniqueId();
         FastBoard board = boards.get(id);
@@ -153,24 +118,24 @@ public final class HudService {
 
         int online = Bukkit.getOnlinePlayers().size();
         int max = Bukkit.getMaxPlayers();
-        int desert = teams.size(EventTeam.DESERT);
-        int jungle = teams.size(EventTeam.JUNGLE);
+        int team1 = teams.size(EventTeam.TEAM1);
+        int team2 = teams.size(EventTeam.TEAM2);
         int kills = teams.kills(id);
         int deaths = teams.deaths(id);
         EventState eventState = event.state();
 
-        SidebarState state = new SidebarState(online, max, desert, jungle, kills, deaths, eventState);
+        SidebarState state = new SidebarState(online, max, team1, team2, kills, deaths, eventState);
         if (state.equals(lastSidebar.put(id, state))) return;
 
         String kd = String.format(Locale.ROOT, "%.2f", deaths == 0 ? kills : (double) kills / deaths);
 
         List<Component> lines = new ArrayList<>(9);
         lines.add(Component.text()
-                .append(Component.text("Desert", DESERT, TextDecoration.BOLD))
-                .append(Component.text(" " + desert, NamedTextColor.WHITE))
+                .append(Component.text("Team 1", Team_1, TextDecoration.BOLD))
+                .append(Component.text(" " + team1, NamedTextColor.WHITE))
                 .append(TEAM_VS)
-                .append(Component.text("Jungle", JUNGLE, TextDecoration.BOLD))
-                .append(Component.text(" " + jungle, NamedTextColor.WHITE))
+                .append(Component.text("Team 2", Team_2, TextDecoration.BOLD))
+                .append(Component.text(" " + team2, NamedTextColor.WHITE))
                 .build());
         lines.add(BLANK);
         lines.add(Component.text().append(ONLINE_LABEL).append(Component.text(online + "/" + max, NamedTextColor.YELLOW)).build());
@@ -213,7 +178,5 @@ public final class HudService {
         return map;
     }
 
-    private record SidebarState(int online, int max, int desert, int jungle, int kills, int deaths, EventState state) {}
-
-    private record ActionBarState(int desert, int jungle, int hp) {}
+    private record SidebarState(int online, int max, int team1, int team2, int kills, int deaths, EventState state) {}
 }

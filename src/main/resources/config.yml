@@ -4,6 +4,9 @@ teams:
   maximum-size: 50
   friendly-fire: false
   auto-balance: true
+  auto-assign-on-join: true
+  restrict-switch-to-first-day: true
+  switch-window-hours: 24
 team-spawns:
   desert: {}
   jungle: {}

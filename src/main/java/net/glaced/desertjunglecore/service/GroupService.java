@@ -10,6 +10,12 @@ public final class GroupService {
     public void loadDefinitions(){var y=YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(),"groups.yml"));var root=y.getConfigurationSection("groups");if(root==null)return;for(String n:root.getKeys(false)){var s=root.getConfigurationSection(n);groups.put(n,new Group(n,s.getInt("weight"),s.getString("prefix",""),s.getString("suffix",""),s.getStringList("inherits"),s.getStringList("permissions")));}}
     public Group get(String name){return groups.getOrDefault(name,groups.get("default"));}
     public String prefix(Player p){return get(assigned.getOrDefault(p.getUniqueId(),"default")).prefix();}
-    public void assign(Player target,String group){if(!groups.containsKey(group))throw new IllegalArgumentException("Unknown group");assigned.put(target.getUniqueId(),group);repository.load(target.getUniqueId()).thenAccept(d->repository.save(new PlayerData(d.id(),d.team(),group,d.kills(),d.deaths(),d.assists())));}
+    public void assign(Player target, String group) {
+        if (!groups.containsKey(group)) throw new IllegalArgumentException("Unknown group");
+        assigned.put(target.getUniqueId(), group);
+        repository.load(target.getUniqueId()).thenAccept(d ->
+                repository.save(new PlayerData(d.id(), d.team(), group, d.kills(), d.deaths(), d.assists(), d.firstAssignedAt()))
+        );
+    }
     public record Group(String name,int weight,String prefix,String suffix,List<String> inherits,List<String> permissions){}
 }

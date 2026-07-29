@@ -35,6 +35,9 @@ commands:
     description: Change gamemode
     usage: /gm 0-3
     permission: gm.use
+  tp:
+    description: Tp to player
+    usage: /tp <player>
 permissions:
   desertjungle.team:
     default: op
@@ -53,4 +56,6 @@ permissions:
   mute.use:
     default: op
   gm.use:
+    default: op
+  tp.use:
     default: op

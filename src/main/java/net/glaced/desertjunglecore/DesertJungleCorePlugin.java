@@ -68,6 +68,7 @@ public final class DesertJungleCorePlugin extends JavaPlugin {
         register("vanish", new VanishCommand(this));
         register("gm", new GamemodeCommand(this));
         register("mute", new MuteCommand(this, muteService));
+        register("tp", new TpCommand());
 
         getLogger().info("DesertJungleCore enabled.");
     }
