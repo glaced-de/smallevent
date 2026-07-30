@@ -55,7 +55,8 @@ public final class TeamService {
                 PlayerData assigned = new PlayerData(data.id(), randomTeam, data.group(), data.kills(), data.deaths(), data.assists(), System.currentTimeMillis());
                 repository.save(assigned);
                 applyLuckPermsGroup(player, null, randomTeam);
-                player.sendMessage(Component.text("Du wurdest zufällig " + randomTeam.display() + " zugeteilt.", randomTeam.color()));
+                player.sendMessage(Component.text("You are randomly choosed for " + randomTeam.display() + ". If you want to change that /wiki", randomTeam.color()));
+                player.sendActionBar("§e§lYou are §7" + randomTeam.display() + "/wiki if you want to change");
                 data = assigned;
             }
 
@@ -84,7 +85,7 @@ public final class TeamService {
         if (size(team) >= config.maxTeamSize()) return false;
 
         if (!canSwitchTeam(player.getUniqueId())) {
-            player.sendMessage(Component.text("Team-Wechsel ist nur am ersten Tag möglich.", NamedTextColor.RED));
+            player.sendMessage(Component.text("Team-change is only possible on day 1.", NamedTextColor.RED));
             return false;
         }
 
@@ -116,6 +117,11 @@ public final class TeamService {
         applyLuckPermsGroup(player, old.team(), team);
     }
 
+    /**
+     * Aktualisiert die LuckPerms-Gruppe eines Spielers.
+     * newTeam darf null sein (z. B. beim Team-Leave) — dann wird nur die alte Gruppe entfernt,
+     * ohne eine neue hinzuzufügen.
+     */
     private void applyLuckPermsGroup(Player player, EventTeam previousTeam, EventTeam newTeam) {
         if (luckPerms == null) {
             plugin.getLogger().warning("LuckPerms is not initialized on TeamService; skipping group update for " + player.getName());
@@ -125,7 +131,9 @@ public final class TeamService {
             if (previousTeam != null && previousTeam != newTeam) {
                 user.data().remove(Node.builder("group." + previousTeam.luckPermsGroup()).build());
             }
-            user.data().add(Node.builder("group." + newTeam.luckPermsGroup()).build());
+            if (newTeam != null) {
+                user.data().add(Node.builder("group." + newTeam.luckPermsGroup()).build());
+            }
             luckPerms.getUserManager().saveUser(user);
         }).exceptionally(error -> {
             plugin.getLogger().warning("Could not update LuckPerms group for " + player.getName() + ": " + error.getMessage());
@@ -139,6 +147,7 @@ public final class TeamService {
         PlayerData next = new PlayerData(old.id(), null, old.group(), old.kills(), old.deaths(), old.assists(), old.firstAssignedAt());
         players.put(next.id(), next);
         repository.save(next);
+        applyLuckPermsGroup(player, old.team(), null);
     }
 
     public boolean teleportToSpawn(Player player) {

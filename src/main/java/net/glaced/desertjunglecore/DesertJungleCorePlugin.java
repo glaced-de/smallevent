@@ -37,8 +37,16 @@ public final class DesertJungleCorePlugin extends JavaPlugin {
         repository.initialize(); // players + muted_players
 
         // Services
+        // Services
         spawns = new SpawnService(this);
         teams = new TeamService(this, repository, config, spawns);
+
+        if (getServer().getPluginManager().getPlugin("LuckPerms") != null) {
+            teams.setLuckPerms(net.luckperms.api.LuckPermsProvider.get());
+        } else {
+            getLogger().warning("LuckPerms nicht gefunden – Team-Gruppen werden nicht zugewiesen.");
+        }
+
         groups = new GroupService(this, repository);
         event = new EventService(this, teams, config);
         hud = new HudService(this, teams, event, groups, config);
@@ -69,6 +77,7 @@ public final class DesertJungleCorePlugin extends JavaPlugin {
         register("gm", new GamemodeCommand(this));
         register("mute", new MuteCommand(this, muteService));
         register("tp", new TpCommand());
+        register("wiki", new WikiCommand());
 
         getLogger().info("DesertJungleCore enabled.");
     }

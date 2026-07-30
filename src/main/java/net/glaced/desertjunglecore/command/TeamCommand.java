@@ -1,5 +1,6 @@
 package net.glaced.desertjunglecore.command;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import net.glaced.desertjunglecore.api.EventTeam;
@@ -64,9 +65,29 @@ public final class TeamCommand implements CommandExecutor, TabCompleter {
     private boolean noPermission(CommandSender sender) { sender.sendMessage("No permission."); return true; }
 
     @Override public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 1) return List.of("join", "leave", "set", "spawn");
-        if (args.length == 2 && args[0].equalsIgnoreCase("spawn")) return List.of("set");
-        if (args.length == 3 && (args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("spawn"))) return List.of("team1", "team2");
+        if (args.length == 1) {
+            List<String> options = new ArrayList<>(List.of("join", "leave"));
+            if (sender.hasPermission("desertjungle.team.admin")) options.add("set");
+            if (sender.hasPermission("desertjungle.team.spawn")) options.add("spawn");
+            return filter(options, args[0]);
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("spawn") && sender.hasPermission("desertjungle.team.spawn")) {
+            return filter(List.of("set"), args[1]);
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("set") && sender.hasPermission("desertjungle.team.admin")) {
+            return filter(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), args[1]);
+        }
+        if (args.length == 3 && args[0].equalsIgnoreCase("set") && sender.hasPermission("desertjungle.team.admin")) {
+            return filter(List.of("team1", "team2"), args[2]);
+        }
+        if (args.length == 3 && args[0].equalsIgnoreCase("spawn") && sender.hasPermission("desertjungle.team.spawn")) {
+            return filter(List.of("team1", "team2"), args[2]);
+        }
         return List.of();
+    }
+
+    private List<String> filter(List<String> options, String typed) {
+        String lower = typed.toLowerCase();
+        return options.stream().filter(o -> o.toLowerCase().startsWith(lower)).toList();
     }
 }
